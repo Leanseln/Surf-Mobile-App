@@ -1,74 +1,288 @@
-import { Image, StyleSheet, Platform } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { useState, useEffect } from "react"
+import { StatusBar } from "expo-status-bar"
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch } from "react-native"
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"
+import { Anchor, Activity, AlertTriangle, Package, Navigation, Pause, Play } from "lucide-react-native"
 
-export default function HomeScreen() {
+export default function App() {
+  // State for boat status
+  const [isActive, setIsActive] = useState(false)
+  const [boatState, setBoatState] = useState("Stop") // 'Patrolling', 'Stuck', 'Stop'
+  const [hasWeight, setHasWeight] = useState(false)
+  const [batteryLevel, setBatteryLevel] = useState(78)
+
+  // Simulate changing boat state
+  useEffect(() => {
+    if (isActive) {
+      setBoatState("Patrolling")
+    } else {
+      setBoatState("Stop")
+    }
+  }, [isActive])
+
+  // Function to toggle boat activity
+  const toggleBoatActivity = () => {
+    setIsActive(!isActive)
+  }
+
+  // Function to simulate boat getting stuck
+  const simulateStuck = () => {
+    if (isActive) {
+      setBoatState("Stuck")
+    }
+  }
+
+  // Function to simulate weight change
+  const toggleWeight = () => {
+    setHasWeight(!hasWeight)
+  }
+
+  // Get color based on boat state
+  const getStateColor = (state: string) => {
+    switch (state) {
+      case "Patrolling":
+        return "#22c55e" // Green
+      case "Stuck":
+        return "#ef4444" // Red
+      case "Stop":
+        return "#6b7280" // Gray
+      default:
+        return "#6b7280"
+    }
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="auto" />
+
+        {/* Header */}
+        <View style={styles.header}>
+          <Anchor color="#0284c7" size={28} />
+          <Text style={styles.headerTitle}>Boat Dashboard</Text>
+        </View>
+
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
+          {/* Main Status Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Activity size={24} color="#0284c7" />
+              <Text style={styles.cardTitle}>Boat Status</Text>
+            </View>
+            <View style={styles.statusContainer}>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Active</Text>
+                <View style={[styles.statusIndicator, { backgroundColor: isActive ? "#22c55e" : "#6b7280" }]}>
+                  <Text style={styles.statusText}>{isActive ? "ON" : "OFF"}</Text>
+                </View>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: isActive ? "#ef4444" : "#22c55e" }]}
+              onPress={toggleBoatActivity}
+            >
+              {isActive ? <Pause color="white" size={20} /> : <Play color="white" size={20} />}
+              <Text style={styles.actionButtonText}>{isActive ? "Stop Boat" : "Start Boat"}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Boat State Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Navigation size={24} color="#0284c7" />
+              <Text style={styles.cardTitle}>Navigation State</Text>
+            </View>
+            <View style={styles.stateContainer}>
+              <View style={[styles.stateIndicator, { backgroundColor: getStateColor(boatState) }]}>
+                {boatState === "Stuck" && <AlertTriangle color="white" size={20} />}
+                <Text style={styles.stateText}>{boatState}</Text>
+              </View>
+              <Text style={styles.stateDescription}>
+                {boatState === "Patrolling" && "Boat is actively patrolling the designated area."}
+                {boatState === "Stuck" && "Boat has encountered an obstacle and needs assistance."}
+                {boatState === "Stop" && "Boat is currently stopped and not in operation."}
+              </Text>
+            </View>
+          </View>
+
+          {/* Weight Sensor Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Package size={24} color="#0284c7" />
+              <Text style={styles.cardTitle}>Weight Sensor</Text>
+            </View>
+            <View style={styles.weightContainer}>
+              <View style={styles.weightStatus}>
+                <Text style={styles.weightLabel}>Current Weight:</Text>
+                <Text style={styles.weightValue}>3 kg</Text>
+              </View>
+              <View style={[styles.weightIndicator, { backgroundColor: "#22c55e" }]}>
+                <Text style={styles.weightText}>Load Detected</Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
+  )
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#f1f5f9",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 12,
+    color: "#0f172a",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 16,
+    gap: 16,
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 8,
+    color: "#0f172a",
+  },
+  statusContainer: {
+    gap: 16,
+  },
+  statusItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  statusLabel: {
+    fontSize: 16,
+    color: "#334155",
+  },
+  statusIndicator: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    minWidth: 60,
+    alignItems: "center",
+  },
+  statusText: {
+    color: "white",
+    fontWeight: "600",
+  },
+  batteryContainer: {
+    width: 100,
+    height: 24,
+    backgroundColor: "#e2e8f0",
+    borderRadius: 12,
+    overflow: "hidden",
+    position: "relative",
+  },
+  batteryLevel: {
+    height: "100%",
+    position: "absolute",
     left: 0,
-    position: 'absolute',
+    top: 0,
   },
-});
+  batteryText: {
+    position: "absolute",
+    width: "100%",
+    textAlign: "center",
+    lineHeight: 24,
+    color: "white",
+    fontWeight: "600",
+    textShadowColor: "rgba(0, 0, 0, 0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  stateContainer: {
+    alignItems: "center",
+    gap: 12,
+  },
+  stateIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 6,
+  },
+  stateText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  stateDescription: {
+    textAlign: "center",
+    color: "#64748b",
+    fontSize: 14,
+  },
+  weightContainer: {
+    gap: 16,
+  },
+  weightStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  weightLabel: {
+    fontSize: 16,
+    color: "#334155",
+  },
+  weightIndicator: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  weightValue: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#0284c7",
+  },
+  weightText: {
+    color: "white",
+    fontWeight: "600",
+  },
+  actionButton: {
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  actionButtonText: {
+    color: "white",
+    fontWeight: "600",
+  },
+})
+
