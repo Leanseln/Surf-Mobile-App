@@ -1,18 +1,22 @@
-import { View, Text, StatusBar, StyleSheet, Image } from 'react-native'
-import React from 'react'
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Anchor } from 'lucide-react-native';
-import Entypo from '@expo/vector-icons/Entypo';
+import { View, Text, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { CornerDownLeft, CircleStop, CircleArrowLeft, CircleArrowRight, ChevronsLeftRightEllipsis  } from 'lucide-react-native';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"
 
 const control = () => {
+  const [isActive, setIsActive] = useState(false);
+
+  const toggleBoatActivity = () => {
+      setIsActive(!isActive);
+  }
   return (
     <SafeAreaProvider>
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
        <StatusBar barStyle="dark-content" />
       
       {/* Header */}
       <View style={styles.header}>
+          <ChevronsLeftRightEllipsis color="#0284c7" size={28}/>
           <Text style={styles.headerTitle}>In-Control</Text>
         </View>
     
@@ -22,36 +26,44 @@ const control = () => {
 
       <View style={styles.card}>
         <View style={styles.arrows}>
-          <AntDesign name="leftcircleo" size={48} color="black" />
-          <Entypo name="controller-stop" size={48} color="red" />
-          <AntDesign name="rightcircleo" size={48} color="black" />
+          <CircleArrowLeft size={48} color="#70affa" strokeWidth={1.50} />
+          <CircleStop size={48} color="#ef4444" strokeWidth={1.50} />
+          <CircleArrowRight size={48} color="#70affa" strokeWidth={1.50} />
         </View>
 
-        <View style={styles.safeZoneContainer} >
-          <Text style={styles.safeZone}>Back to Safe Zone</Text>  
-        </View>
+        <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: isActive ? "#ef4444" : "#70affa" }]}
+              onPress={toggleBoatActivity}
+            >
+              {isActive ? <CircleStop color="white" size={20} /> : <CornerDownLeft color="white" size={20} />}
+              <Text style={styles.actionButtonText}>{isActive ? "Returning" : "Return to the base"}</Text>
+            </TouchableOpacity>
       </View>
     </SafeAreaView>
     </SafeAreaProvider>
   )
 }
 
-const styles = StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      padding: 8,
-      backgroundColor: "white",
-      borderBottomWidth: 1,
-      borderBottomColor: "#e2e8f0",
+const styles = StyleSheet.create({  
+  container: {
+    flex: 1,
+    backgroundColor: "white",
     },
-    headerTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-      marginLeft: 12,
-      color: "#0f172a",
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
     },
-    headerText: {
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 12,
+    color: "#0f172a",
+    },
+  headerText: {
       fontSize: 22,
       color: "#9e9e9e",
     },
@@ -59,16 +71,16 @@ const styles = StyleSheet.create({
       width: '100%',
       height: '65%',
     },
-    arrows: {
+  arrows: {
       flexDirection: 'row',
       justifyContent:  'space-evenly',
       margin: 16,
     },
-    safeZoneContainer: {
+  safeZoneContainer: {
       justifyContent: 'center',
       alignItems: 'center',
     },
-    safeZone: {
+  safeZone: {
       backgroundColor: 'green',
       justifyContent: 'center',
       color: 'white',
@@ -77,15 +89,24 @@ const styles = StyleSheet.create({
       width: '50%',
       padding: 8,
     },
-    card: {
+  card: {
       backgroundColor: "white",
       borderRadius: 12,
       padding: 16,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
-      elevation: 2,
+      
     },
+    actionButton: {
+      marginTop: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 12,
+      borderRadius: 8,
+      gap: 8,
+    },
+  actionButtonText: {
+    color: "white",
+    fontWeight: "600",
+  },
   })
 export default control

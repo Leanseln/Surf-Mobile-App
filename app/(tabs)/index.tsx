@@ -16,8 +16,10 @@ export default function App() {
   useEffect(() => {
     if (isActive) {
       setBoatState("Patrolling")
-    } else {
+    } else if(!isActive) {
       setBoatState("Stop")
+    } else {
+      setBoatState('Stuck')
     }
   }, [isActive])
 
@@ -42,7 +44,7 @@ export default function App() {
   const getStateColor = (state: string) => {
     switch (state) {
       case "Patrolling":
-        return "#22c55e" // Green
+        return "#70affa" // Blue
       case "Stuck":
         return "#ef4444" // Red
       case "Stop":
@@ -73,13 +75,13 @@ export default function App() {
             <View style={styles.statusContainer}>
               <View style={styles.statusItem}>
                 <Text style={styles.statusLabel}>Active</Text>
-                <View style={[styles.statusIndicator, { backgroundColor: isActive ? "#22c55e" : "#6b7280" }]}>
+                <View style={[styles.statusIndicator, { backgroundColor: isActive ? "#70affa" : "#6b7280" }]}>
                   <Text style={styles.statusText}>{isActive ? "ON" : "OFF"}</Text>
                 </View>
               </View>
-            </View>
+            </View> 
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: isActive ? "#ef4444" : "#22c55e" }]}
+              style={[styles.actionButton, { backgroundColor: isActive ? "#ef4444" : "#70affa" }]}
               onPress={toggleBoatActivity}
             >
               {isActive ? <Pause color="white" size={20} /> : <Play color="white" size={20} />}
@@ -117,7 +119,7 @@ export default function App() {
                 <Text style={styles.weightLabel}>Current Weight:</Text>
                 <Text style={styles.weightValue}>3 kg</Text>
               </View>
-              <View style={[styles.weightIndicator, { backgroundColor: "#22c55e" }]}>
+              <View style={[styles.weightIndicator, { backgroundColor: "#70affa" }]}>
                 <Text style={styles.weightText}>Load Detected</Text>
               </View>
             </View>
@@ -198,31 +200,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
   },
-  batteryContainer: {
-    width: 100,
-    height: 24,
-    backgroundColor: "#e2e8f0",
-    borderRadius: 12,
-    overflow: "hidden",
-    position: "relative",
-  },
-  batteryLevel: {
-    height: "100%",
-    position: "absolute",
-    left: 0,
-    top: 0,
-  },
-  batteryText: {
-    position: "absolute",
-    width: "100%",
-    textAlign: "center",
-    lineHeight: 24,
-    color: "white",
-    fontWeight: "600",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
   stateContainer: {
     alignItems: "center",
     gap: 12,
@@ -271,15 +248,15 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
   },
-  actionButton: {
-    marginTop: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
+    actionButton: {
+      marginTop: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 12,
+      borderRadius: 8,
+      gap: 8,
+    },
   actionButtonText: {
     color: "white",
     fontWeight: "600",

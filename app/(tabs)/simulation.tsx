@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
-import { Play, Anchor } from "lucide-react-native"
+import { Play, Anchor, Waypoints } from "lucide-react-native"
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"
 
 const Simulation = () => {
@@ -18,8 +18,11 @@ const Simulation = () => {
   return (
     <SafeAreaProvider >
       <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Simulation Control</Text>
-
+        <View style={styles.header}>
+          <Waypoints color="#0284c7" size={28}/>
+          <Text style={styles.headerTitle}>Simulation Control</Text>
+        </View>
+    <View style={styles.card}>
       <TouchableOpacity
         style={[styles.button, styles.startButton, isSimulationActive && styles.activeButton]}
         onPress={toggleSimulation}
@@ -30,6 +33,7 @@ const Simulation = () => {
         <Text style={styles.buttonText}>{isSimulationActive ? "Stop Simulation" : "Start Simulation"}</Text>
       </TouchableOpacity>
 
+    {isSimulationActive && (
       <View style={styles.rescueContainer}>
         <TouchableOpacity
           style={[styles.button, styles.rescueButton]}
@@ -52,6 +56,8 @@ const Simulation = () => {
           <Anchor color="white" size={24} />
           <Text style={styles.buttonText}>Rescue 2</Text>
         </TouchableOpacity>
+        </View>
+    )}
       </View>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -60,22 +66,33 @@ const Simulation = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 12,
+    color: "#0f172a",
+  },
+  card: {
     backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
-    marginTop: 24,
-    marginVertical: 8,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 16,
-    color: "#0f172a",
+    shadowRadius: 2,
+    elevation: 2,
+    margin: 16,
   },
   button: {
     flexDirection: "row",
@@ -86,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   startButton: {
-    backgroundColor: "#22c55e",
+    backgroundColor: "#70affa",
   },
   activeButton: {
     backgroundColor: "#ef4444",
