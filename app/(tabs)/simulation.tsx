@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ef4444",
   },
   rescueButton: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: "#70affa",
     flex: 1,
     marginHorizontal: 4,
   },
