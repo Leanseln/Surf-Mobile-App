@@ -46,6 +46,12 @@
         "projectId": "ad4a0eb5-b717-4f1c-9f54-1afd71acef10"
       }
     },
-    "owner": "betterinblue"
+    "owner": "betterinblue",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ad4a0eb5-b717-4f1c-9f54-1afd71acef10"
+    }
   }
 }
